@@ -6,7 +6,7 @@ const ErrorPage = () => {
         <p className='fs-lg fw-bold'>Page Not Found 👋</p>
       </div>
     </main>
-  )
-}
+  );
+};
 
-export default ErrorPage
+export default ErrorPage;

@@ -1,8 +1,8 @@
-import fs from 'node:fs'
+import fs from 'node:fs';
 
 try {
   // Check if database existsts and create it from dummy data
-  fs.statSync('database.json')
+  fs.statSync('database.json');
 } catch (error) {
-  fs.copyFileSync('initialDatabase.json', 'database.json')
+  fs.copyFileSync('initialDatabase.json', 'database.json');
 }

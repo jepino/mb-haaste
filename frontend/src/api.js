@@ -1,7 +1,6 @@
-
 export const client = async (
   endpoint,
-  { data, headers: customHeaders, ...customConfig } = {},
+  { data, headers: customHeaders, ...customConfig } = {}
 ) => {
   const config = {
     method: data ? 'POST' : 'GET',
@@ -11,14 +10,13 @@ export const client = async (
       ...customHeaders,
     },
     ...customConfig,
-  }
+  };
 
-  const response = await fetch(`${endpoint}`, config)
-  const responseData  = await response.json()
-  if(response.ok) {
-    return responseData
+  const response = await fetch(`${endpoint}`, config);
+  const responseData = await response.json();
+  if (response.ok) {
+    return responseData;
   } else {
-    return Promise.reject(responseData)
+    return Promise.reject(responseData);
   }
-}
-
+};
