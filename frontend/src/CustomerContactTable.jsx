@@ -1,5 +1,6 @@
 import PropTypes from 'prop-types';
 
+// eslint-disable-next-line no-unused-vars
 const Table = ({ customerId }) => {
   const customerContacts = [
     // { customerId: 'id-1', contactId: 'id-11' } // MB-TODO: Example response

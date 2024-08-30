@@ -5,6 +5,7 @@
   "main": "index.js",
   "type": "module",
   "scripts": {
+    "postinstall": "git config --local core.hooksPath .git-hooks",
     "test": "echo \"Error: no test specified\" && exit 1",
     "format": "prettier backend frontend package.json --write",
     "format:check": "prettier . --check"
