@@ -1,0 +1,21 @@
+{
+  "name": "mb-haaste",
+  "version": "1.0.0",
+  "description": "Rekryhaaste Mad Boosterille hakevalle",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/MadBooster/mb-haaste.git"
+  },
+  "author": "Mad Booster Oy",
+  "license": "MIT",
+  "homepage": "https://github.com/MadBooster/mb-haaste#readme",
+  "workspaces": [
+    "frontend",
+    "backend"
+  ]
+}

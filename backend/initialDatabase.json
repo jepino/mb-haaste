@@ -1,0 +1,177 @@
+{
+    "customers": {
+        "id-17795": {
+            "id": "id-17795",
+            "name": "Farrell LLC",
+            "country": "Spain",
+            "isActive": true
+        },
+        "id-19658": {
+            "id": "id-19658",
+            "name": "McCullough, Marks and Satterfield",
+            "country": "Uruguay",
+            "isActive": true
+        },
+        "id-79303": {
+            "id": "id-79303",
+            "name": "Steuber Inc",
+            "country": "Guinea",
+            "isActive": false
+        },
+        "id-87214": {
+            "id": "id-87214",
+            "name": "Altenwerth LLC",
+            "country": "Northern Mariana Islands",
+            "isActive": false
+        },
+        "id-80586": {
+            "id": "id-80586",
+            "name": "Ryan Inc",
+            "country": "Guyana",
+            "isActive": true
+        },
+        "id-9124": {
+            "id": "id-9124",
+            "name": "Conroy - Ferry",
+            "country": "Turks and Caicos Islands",
+            "isActive": false
+        },
+        "id-95358": {
+            "id": "id-95358",
+            "name": "O'Conner LLC",
+            "country": "Aruba",
+            "isActive": false
+        },
+        "id-87617": {
+            "id": "id-87617",
+            "name": "VonRueden, Leuschke and Jacobi",
+            "country": "Honduras",
+            "isActive": true
+        },
+        "id-18631": {
+            "id": "id-18631",
+            "name": "Marquardt Group",
+            "country": "Sudan",
+            "isActive": false
+        },
+        "id-45575": {
+            "id": "id-45575",
+            "name": "Smith, Runte and Haag",
+            "country": "Saint Kitts and Nevis",
+            "isActive": false
+        },
+        "id-48470": {
+            "id": "id-48470",
+            "name": "Welch - Jerde",
+            "country": "Micronesia",
+            "isActive": true
+        },
+        "id-41867": {
+            "id": "id-41867",
+            "name": "Morissette Inc",
+            "country": "Saint Lucia",
+            "isActive": true
+        },
+        "id-69180": {
+            "id": "id-69180",
+            "name": "Friesen - Crist",
+            "country": "Norfolk Island",
+            "isActive": false
+        },
+        "id-65607": {
+            "id": "id-65607",
+            "name": "Jacobi LLC",
+            "country": "Canada",
+            "isActive": true
+        },
+        "id-20187": {
+            "id": "id-20187",
+            "name": "Batz - Crooks",
+            "country": "Vanuatu",
+            "isActive": false
+        },
+        "id-77215": {
+            "id": "id-77215",
+            "name": "Kerluke, Pouros and Kris",
+            "country": "Gambia",
+            "isActive": false
+        },
+        "id-95818": {
+            "id": "id-95818",
+            "name": "Luettgen - Boehm",
+            "country": "Mongolia",
+            "isActive": true
+        },
+        "id-6285": {
+            "id": "id-6285",
+            "name": "Goldner Inc",
+            "country": "Tajikistan",
+            "isActive": true
+        },
+        "id-30195": {
+            "id": "id-30195",
+            "name": "Toy Group",
+            "country": "Isle of Man",
+            "isActive": false
+        },
+        "id-84395": {
+            "id": "id-84395",
+            "name": "Haag Group",
+            "country": "Taiwan",
+            "isActive": false
+        }
+    },
+    "contacts": {
+        "id-94403": {
+            "id": "id-94403",
+            "firstName": "Karli Von",
+            "lastName": "Hahn"
+        },
+        "id-11638": {
+            "id": "id-11638",
+            "firstName": "Malachi Gutkowski",
+            "lastName": "VonRueden"
+        },
+        "id-27282": {
+            "id": "id-27282",
+            "firstName": "Ms. Esperanza Walsh",
+            "lastName": "Koch"
+        },
+        "id-34529": {
+            "id": "id-34529",
+            "firstName": "Celestine Turcotte",
+            "lastName": "Crooks"
+        },
+        "id-26348": {
+            "id": "id-26348",
+            "firstName": "Malcolm Corwin",
+            "lastName": "Aufderhar"
+        },
+        "id-35666": {
+            "id": "id-35666",
+            "firstName": "Cordie Feeney",
+            "lastName": "Cremin"
+        },
+        "id-79745": {
+            "id": "id-79745",
+            "firstName": "Salvador Swaniawski",
+            "lastName": "Pouros"
+        },
+        "id-57918": {
+            "id": "id-57918",
+            "firstName": "Heber Lemke",
+            "lastName": "Rath"
+        },
+        "id-6892": {
+            "id": "id-6892",
+            "firstName": "Mr. Jennings Labadie",
+            "lastName": "Rogahn"
+        },
+        "id-12918": {
+            "id": "id-12918",
+            "firstName": "Eulah Dare",
+            "lastName": "Dickens"
+        }
+    },
+    "customerContacts": {}
+}
