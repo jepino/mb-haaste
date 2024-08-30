@@ -6,7 +6,8 @@
   "scripts": {
     "dev": "node setup.js && nodemon ./app/index.js",
     "start": "NODE_ENV=production node ./app/index.js",
-    "test": "node ./app/models.test.js"
+    "test": "node ./app/models.test.js",
+    "lint": "eslint . --ext js --report-unused-disable-directives --max-warnings 0"
   },
   "dependencies": {
     "cors": "^2.8.5",
@@ -17,6 +18,7 @@
   },
   "devDependencies": {
     "eslint": "^8.45.0",
+    "eslint-config-madbooster-node-app": "^9.0.0",
     "nodemon": "^3.0.1"
   }
 }

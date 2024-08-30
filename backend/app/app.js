@@ -1,6 +1,7 @@
 import express from 'express';
-import morgan from 'morgan';
 import helmet from 'helmet';
+import morgan from 'morgan';
+
 import errorHandler from './errorHandler.js';
 import routes from './routes.js';
 

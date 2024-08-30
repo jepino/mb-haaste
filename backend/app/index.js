@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 import app from './app.js';
 import config from './config.js';
 
@@ -6,8 +7,8 @@ const server = app.listen(config.port, () => {
 });
 
 process.on('SIGTERM', () => {
-  debug('SIGTERM signal received: closing HTTP server');
+  console.debug('SIGTERM signal received: closing HTTP server');
   server.close(() => {
-    debug('HTTP server closed');
+    console.debug('HTTP server closed');
   });
 });

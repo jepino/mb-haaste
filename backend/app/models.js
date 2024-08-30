@@ -1,7 +1,7 @@
 /**
  * Simple ORM using regular json file as "database".
  */
-import { JsonDB, Config } from 'node-json-db';
+import { Config, JsonDB } from 'node-json-db';
 
 const db = new JsonDB(new Config('database', true, true, '.'));
 
@@ -40,7 +40,6 @@ const createOneToManyModel = (key, modifier) => ({
     const items = await db.getObjectDefault(`.${key}.${parentId}`, []);
     const filtered = items.filter(items => items.subId !== subId);
     await db.push(`.${key}.${parentId}`, filtered, true);
-    return;
   },
   deleteAll: async parentId => db.delete(`.${key}.${parentId}`),
 });
