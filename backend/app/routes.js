@@ -29,9 +29,23 @@ routes.post('/api/customers', async (req, res) => {
   return res.send(customers);
 });
 
-// MB-TODO: Create route for updating customer
+// MB-DONE: Create route for updating customer
+/** @todo Validate request body */
 routes.put('/api/customers/:customerId', async (req, res) => {
-  throw new NotImplemented();
+  const { customerId } = req.params;
+
+  const existingCustomer = await Customers.get(customerId);
+  if (!existingCustomer) {
+    throw new NotFound('Customer Not Found');
+  }
+
+  const updatedCustomer = await Customers.update(customerId, {
+    id: customerId,
+    name: req.body.name || existingCustomer.name,
+    country: req.body.country || existingCustomer.country,
+    isActive: req.body.isActive || existingCustomer.isActive,
+  });
+  return res.send(updatedCustomer);
 });
 
 // Contacts

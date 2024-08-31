@@ -4,7 +4,7 @@
   "version": "1.0.0",
   "type": "module",
   "scripts": {
-    "dev": "node setup.js && nodemon ./app/index.js",
+    "dev": "node setup.js && nodemon ./app/index.js --ignore database.json",
     "start": "NODE_ENV=production node ./app/index.js",
     "test": "node ./app/models.test.js",
     "lint": "eslint . --ext js --report-unused-disable-directives --max-warnings 0"
