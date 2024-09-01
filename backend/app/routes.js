@@ -1,9 +1,14 @@
 import express from 'express';
 
-import { NotFound, NotImplemented } from './errorHandler.js';
-import { Contacts, Customers } from './models.js';
+import { BadRequest, NotFound } from './errorHandler.js';
+import { Contacts, CustomerContacts, Customers } from './models.js';
 
 const routes = express.Router();
+
+const HttpStatus = {
+  CREATED: 201,
+  NO_CONTENT: 204,
+};
 
 routes.get('/ping', (_req, res) => {
   return res.send({ message: 'pong' });
@@ -33,19 +38,15 @@ routes.post('/api/customers', async (req, res) => {
 /** @todo Validate request body */
 routes.put('/api/customers/:customerId', async (req, res) => {
   const { customerId } = req.params;
-
-  const existingCustomer = await Customers.get(customerId);
-  if (!existingCustomer) {
-    throw new NotFound('Customer Not Found');
-  }
-
-  const updatedCustomer = await Customers.update(customerId, {
-    id: customerId,
-    name: req.body.name || existingCustomer.name,
-    country: req.body.country || existingCustomer.country,
-    isActive: req.body.isActive || existingCustomer.isActive,
-  });
-  return res.send(updatedCustomer);
+  const { name, country, isActive } = req.body;
+  return res.send(
+    await Customers.update(customerId, {
+      id: customerId,
+      name,
+      country,
+      isActive,
+    })
+  );
 });
 
 // Contacts
@@ -85,9 +86,10 @@ routes.post('/api/contacts', async (req, res) => {
  * WHERE cc.customer_id = <<SANITIZED_CUSTOMER_ID>>;
  */
 
-// MB-TODO: Create route for fetching contacts of a customer `/api/customers/:customerId/contacts`
+// MB-DONE: Create route for fetching contacts of a customer `/api/customers/:customerId/contacts`
 routes.get('/api/customers/:customerId/contacts', async (req, res) => {
-  throw new NotImplemented();
+  const { customerId } = req.params;
+  return res.send(await CustomerContacts.getAll(customerId));
 });
 
 /**
@@ -111,9 +113,20 @@ routes.get('/api/customers/:customerId/contacts', async (req, res) => {
  *   SELECT <<SANITIZED_CUSTOMER_ID>>, contact_id FROM created_contact_id;
  * COMMIT;
  */
-// MB-TODO: Create route for adding contact to a customer `/api/customers/:customerId/contacts`
+// MB-DONE: Create route for adding contact to a customer `/api/customers/:customerId/contacts`
 routes.post('/api/customers/:customerId/contacts', async (req, res) => {
-  throw new NotImplemented();
+  const { customerId } = req.params;
+  const { contactId } = req.body;
+
+  if (!contactId) {
+    throw new BadRequest(
+      `Required field 'contactId' missing from request body`
+    );
+  }
+
+  return res
+    .status(HttpStatus.CREATED)
+    .send(await CustomerContacts.add(customerId, contactId));
 });
 
 /**
@@ -138,11 +151,13 @@ routes.post('/api/customers/:customerId/contacts', async (req, res) => {
  *   );
  * COMMIT;
  */
-// MB-TODO:s Create route for deleting contact of customer `/api/customers/:customerId/contacts/:contactId`
+// MB-DONE:s Create route for deleting contact of customer `/api/customers/:customerId/contacts/:contactId`
 routes.delete(
   '/api/customers/:customerId/contacts/:contactId',
   async (req, res) => {
-    throw new NotImplemented();
+    const { customerId, contactId } = req.params;
+    await CustomerContacts.delete(customerId, contactId);
+    res.sendStatus(HttpStatus.NO_CONTENT);
   }
 );
 

@@ -1,10 +1,10 @@
 import config from './config.js';
 
-export class NotImplemented extends Error {
+export class BadRequest extends Error {
   constructor(message) {
-    super(message || 'Not Implemented');
-    this.name = 'NotImplemented';
-    this.status = 501;
+    super(message || 'Bad Request');
+    this.name = 'BadRequest';
+    this.status = 400;
   }
 }
 export class NotFound extends Error {
@@ -12,6 +12,13 @@ export class NotFound extends Error {
     super(message || 'Not Found');
     this.name = 'NotFound';
     this.status = 404;
+  }
+}
+export class NotImplemented extends Error {
+  constructor(message) {
+    super(message || 'Not Implemented');
+    this.name = 'NotImplemented';
+    this.status = 501;
   }
 }
 
