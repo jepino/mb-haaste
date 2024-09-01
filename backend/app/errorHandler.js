@@ -14,6 +14,13 @@ export class NotFound extends Error {
     this.status = 404;
   }
 }
+export class InternalServerError extends Error {
+  constructor(message) {
+    super(message || 'Internal Server Error');
+    this.name = 'InternalServerError';
+    this.status = 500;
+  }
+}
 export class NotImplemented extends Error {
   constructor(message) {
     super(message || 'Not Implemented');

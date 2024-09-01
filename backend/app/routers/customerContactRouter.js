@@ -1,73 +1,21 @@
 import express from 'express';
 
-import { BadRequest, NotFound } from './errorHandler.js';
-import { Contacts, CustomerContacts, Customers } from './models.js';
+import { BadRequest, InternalServerError } from '../errorHandler.js';
+import { CustomerContacts } from '../models.js';
+import { HttpStatus } from './index.js';
 
-const routes = express.Router();
+const customerContactRouter = express.Router();
 
-const HttpStatus = {
-  CREATED: 201,
-  NO_CONTENT: 204,
+const checkCustomerId = (req, _res, next) => {
+  const { customerId } = req.params;
+  if (!customerId) {
+    throw new InternalServerError();
+  }
+  next();
 };
 
-routes.get('/ping', (_req, res) => {
-  return res.send({ message: 'pong' });
-});
-
-// Customers
-routes.get('/api/customers', async (_req, res) => {
-  const customers = await Customers.getAll();
-  return res.send(customers);
-});
-
-routes.get('/api/customers/:customerId', async (req, res) => {
-  const { customerId } = req.params;
-  const customer = await Customers.get(customerId);
-  if (!customer) {
-    throw new NotFound('Customer Not Found');
-  }
-  return res.send(customer);
-});
-
-routes.post('/api/customers', async (req, res) => {
-  const customers = await Customers.add(req.body);
-  return res.send(customers);
-});
-
-// MB-DONE: Create route for updating customer
-/** @todo Validate request body */
-routes.put('/api/customers/:customerId', async (req, res) => {
-  const { customerId } = req.params;
-  const { name, country, isActive } = req.body;
-  return res.send(
-    await Customers.update(customerId, {
-      id: customerId,
-      name,
-      country,
-      isActive,
-    })
-  );
-});
-
-// Contacts
-routes.get('/api/contacts', async (_req, res) => {
-  const contacts = await Contacts.getAll();
-  return res.send(contacts);
-});
-
-routes.get('/api/contacts/:contactId', async (req, res) => {
-  const { contactId } = req.params;
-  const contact = await Contacts.get(contactId);
-  if (!contact) {
-    throw new NotFound('Contact not found');
-  }
-  return res.send(contact);
-});
-
-routes.post('/api/contacts', async (req, res) => {
-  const contacts = await Contacts.add(req.body);
-  return res.send(contacts);
-});
+// Check that customer ID is present in the request parameters matched by the parent router.
+customerContactRouter.use(checkCustomerId);
 
 /**
  *  MB-DONE: Let's assume application uses relation database (like PostgreSQL). The database has following tables:
@@ -87,7 +35,7 @@ routes.post('/api/contacts', async (req, res) => {
  */
 
 // MB-DONE: Create route for fetching contacts of a customer `/api/customers/:customerId/contacts`
-routes.get('/api/customers/:customerId/contacts', async (req, res) => {
+customerContactRouter.get('/', async (req, res) => {
   const { customerId } = req.params;
   return res.send(await CustomerContacts.getAll(customerId));
 });
@@ -114,10 +62,9 @@ routes.get('/api/customers/:customerId/contacts', async (req, res) => {
  * COMMIT;
  */
 // MB-DONE: Create route for adding contact to a customer `/api/customers/:customerId/contacts`
-routes.post('/api/customers/:customerId/contacts', async (req, res) => {
+customerContactRouter.post('/', async (req, res) => {
   const { customerId } = req.params;
   const { contactId } = req.body;
-
   if (!contactId) {
     throw new BadRequest(
       `Required field 'contactId' missing from request body`
@@ -152,13 +99,10 @@ routes.post('/api/customers/:customerId/contacts', async (req, res) => {
  * COMMIT;
  */
 // MB-DONE:s Create route for deleting contact of customer `/api/customers/:customerId/contacts/:contactId`
-routes.delete(
-  '/api/customers/:customerId/contacts/:contactId',
-  async (req, res) => {
-    const { customerId, contactId } = req.params;
-    await CustomerContacts.delete(customerId, contactId);
-    res.sendStatus(HttpStatus.NO_CONTENT);
-  }
-);
+customerContactRouter.delete('/:contactId', async (req, res) => {
+  const { customerId, contactId } = req.params;
+  await CustomerContacts.delete(customerId, contactId);
+  res.sendStatus(HttpStatus.NO_CONTENT);
+});
 
-export default routes;
+export default customerContactRouter;

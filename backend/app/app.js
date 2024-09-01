@@ -3,7 +3,7 @@ import helmet from 'helmet';
 import morgan from 'morgan';
 
 import errorHandler from './errorHandler.js';
-import routes from './routes.js';
+import router from './routers/index.js';
 
 const app = express();
 
@@ -32,7 +32,7 @@ app.use(helmet());
 // Logs incoming HTTP requests to STDOUT in the predefined tiny format.
 app.use(morgan('tiny'));
 // Attaches route handling middlewares that fetch requested data and populate response objects with it.
-app.use(routes);
+app.use(router);
 // Handles errors from other middlewares.
 app.use(errorHandler);
 
