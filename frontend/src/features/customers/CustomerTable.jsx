@@ -2,10 +2,16 @@ import PropTypes from 'prop-types';
 import { useNavigate } from 'react-router-dom';
 import MBTodo from '../../components/MBTodo';
 
+const FilterState = Object.freeze({
+  ALL: 'all',
+  ACTIVE: 'active',
+  INACTIVE: 'inactive',
+});
+
 const Table = ({ customers }) => {
   const navigate = useNavigate();
 
-  const clicker = customer => {
+  const handleClick = customer => {
     navigate(customer.id);
   };
 
@@ -31,7 +37,7 @@ const Table = ({ customers }) => {
         <tbody>
           {customers.map((customer, index) => {
             return (
-              <tr key={index} className='' onClick={() => clicker(customer)}>
+              <tr key={index} className='' onClick={() => handleClick(customer)}>
                 <th scope='row'>{index + 1}</th>
                 <td>{customer.name}</td>
                 <td>{customer.country}</td>

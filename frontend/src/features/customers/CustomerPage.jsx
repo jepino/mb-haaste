@@ -22,16 +22,16 @@ const useCustomer = id => {
   return { data: customer, loading: customerLoading, error, update };
 };
 
-const FormIdentifiers = {
+const FormIdentifiers = Object.freeze({
   NAME: 'nameInput',
   COUNTRY: 'countryInput',
   ACTIVITY: 'activityInput',
-};
+});
 
-const SelectValues = {
+const SelectValues = Object.freeze({
   ACTIVE: 'Active',
   INACTIVE: 'Inactive',
-};
+});
 
 const CustomerPage = () => {
   const { customerId } = useParams();
