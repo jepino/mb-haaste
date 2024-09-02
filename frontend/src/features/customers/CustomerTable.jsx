@@ -32,7 +32,7 @@ const Table = ({ customers }) => {
           {customers.map((customer, index) => {
             return (
               <tr key={index} className='' onClick={() => clicker(customer)}>
-                <tr scope='row'>{index + 1}</tr>
+                <th scope='row'>{index + 1}</th>
                 <td>{customer.name}</td>
                 <td>{customer.country}</td>
                 <td>{customer.isActive ? '✅' : '❌'}</td>
