@@ -1,6 +1,7 @@
 import PropTypes from 'prop-types';
 import { useNavigate } from 'react-router-dom';
 import MBTodo from '../../components/MBTodo';
+import { useMemo, useState } from 'react';
 
 const FilterState = Object.freeze({
   ALL: 'all',
@@ -8,10 +9,37 @@ const FilterState = Object.freeze({
   INACTIVE: 'inactive',
 });
 
+const filterValues = Object.values(FilterState);
+
+const useTableFilters = customers => {
+  const [filter, setFilter] = useState(FilterState.ALL);
+  const filteredCustomers = useMemo(() => {
+    switch (filter) {
+      case FilterState.ALL: {
+        return customers;
+      }
+      case FilterState.ACTIVE: {
+        return customers.filter(customer => customer.isActive);
+      }
+      case FilterState.INACTIVE: {
+        return customers.filter(customer => !customer.isActive);
+      }
+      default: {
+        return customers;
+      }
+    }
+  }, [filter, customers]);
+  const handleFilterClick = newFilter => {
+    setFilter(() => newFilter);
+  };
+  return { filter, filteredCustomers, handleFilterClick };
+};
+
 const Table = ({ customers }) => {
   const navigate = useNavigate();
+  const { filter, filteredCustomers, handleFilterClick } = useTableFilters(customers);
 
-  const handleClick = customer => {
+  const handleCustomerClick = customer => {
     navigate(customer.id);
   };
 
@@ -21,7 +49,19 @@ const Table = ({ customers }) => {
         <div className='card-body'>
           <i className='bi bi-filter' /> Filters
           <div>
-            <MBTodo isCompleted={false} task='Create solution to filters customers by activity' />
+            <MBTodo isCompleted={true} task='Create solution to filters customers by activity' />
+          </div>
+          <div className='btn-group mt-2' role='group' aria-label='activity status filters'>
+            {filterValues.map(filterValue => (
+              <button
+                key={filterValue}
+                type='button'
+                className={`btn btn-primary text-capitalize ${filterValue === filter ? 'active' : null}`}
+                onClick={() => handleFilterClick(filterValue)}
+              >
+                {filterValue}
+              </button>
+            ))}
           </div>
         </div>
       </div>
@@ -35,9 +75,9 @@ const Table = ({ customers }) => {
           </tr>
         </thead>
         <tbody>
-          {customers.map((customer, index) => {
+          {filteredCustomers.map((customer, index) => {
             return (
-              <tr key={index} className='' onClick={() => handleClick(customer)}>
+              <tr key={index} className='' onClick={() => handleCustomerClick(customer)}>
                 <th scope='row'>{index + 1}</th>
                 <td>{customer.name}</td>
                 <td>{customer.country}</td>
