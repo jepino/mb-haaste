@@ -1,23 +1,9 @@
 import { useEffect } from 'react';
-import CustomerTable from './CustomerTable';
-import ContactTable from './ContactTable';
-import CustomerContactTable from './CustomerContactTable';
-import { useParams } from 'react-router-dom';
-import MBTodo from './MBTodo';
 import { useDispatch, useSelector } from 'react-redux';
-import { fetchCustomerById, fetchCustomers } from './customerSlices';
-import { fetchContacts } from './contactSlices';
-import NewCustomer from './NewCustomer';
-
-const useCustomers = () => {
-  const dispatch = useDispatch();
-  useEffect(() => {
-    dispatch(fetchCustomers());
-  }, [dispatch]);
-  const refetch = () => dispatch(fetchCustomers());
-  const { data, status, error } = useSelector(state => state.customers);
-  return { data, status, error, refetch };
-};
+import { useParams } from 'react-router-dom';
+import MBTodo from '../../components/MBTodo';
+import { fetchCustomerById } from './customersSlice';
+import CustomerContactTable from './customerContacts/CustomerContactTable';
 
 const useCustomer = id => {
   const dispatch = useDispatch();
@@ -31,40 +17,7 @@ const useCustomer = id => {
   return { data: customer, status, error };
 };
 
-const useContacts = () => {
-  const dispatch = useDispatch();
-  useEffect(() => {
-    dispatch(fetchContacts());
-  }, [dispatch]);
-  const refetch = () => dispatch(fetchContacts());
-  const { data, status, error } = useSelector(state => state.contacts);
-  return { data, status, error, refetch };
-};
-
-export const Customers = () => {
-  const { data: customers, status, error, refetch } = useCustomers();
-  return (
-    <div className='m-5'>
-      <h1 className='fw-bold'>Customers</h1>
-      <div className='d-flex justify-content-between'>
-        <button className='btn btn-success' onClick={refetch}>
-          <i className='bi bi-arrow-clockwise' /> Refresh
-        </button>
-        <NewCustomer />
-      </div>
-      <div>
-        {error ? (
-          <div className='alert alert-danger d-inline-block' role='alert'>
-            {error.message}
-          </div>
-        ) : null}
-        {status === 'pending' ? 'Loading...' : <CustomerTable customers={customers} />}
-      </div>
-    </div>
-  );
-};
-
-export const Customer = () => {
+const CustomerPage = () => {
   const { customerId } = useParams();
   const { data: customer } = useCustomer(customerId);
   return (
@@ -118,20 +71,4 @@ export const Customer = () => {
   );
 };
 
-export const Contacts = () => {
-  const { data: contacts, status, error, refetch } = useContacts();
-  return (
-    <div className='m-5'>
-      <h1 className='fw-bold'>Contacts</h1>
-      <button className='btn btn-success' onClick={refetch}>
-        <i className='bi bi-arrow-clockwise' /> Refresh
-      </button>
-      {error ? (
-        <div className='alert alert-danger d-inline-block' role='alert'>
-          {error.message}
-        </div>
-      ) : null}
-      <div>{status === 'pending' ? 'Loading...' : <ContactTable contacts={contacts} />}</div>
-    </div>
-  );
-};
+export default CustomerPage;

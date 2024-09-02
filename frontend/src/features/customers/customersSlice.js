@@ -1,5 +1,5 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
-import { client } from './api';
+import { client } from '../../app/api';
 
 const initialState = {
   data: [],
@@ -104,7 +104,7 @@ const customersSlice = createSlice({
       });
   },
 });
-export const customerReducer = customersSlice.reducer;
+export default customersSlice.reducer;
 
 export const fetchCustomers = createAsyncThunk(
   'customers',

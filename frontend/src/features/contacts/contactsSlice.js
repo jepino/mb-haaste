@@ -1,5 +1,5 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
-import { client } from './api';
+import { client } from '../../app/api';
 
 const initialState = {
   data: [],
@@ -46,7 +46,7 @@ const contactsSlice = createSlice({
       });
   },
 });
-export const contactReducer = contactsSlice.reducer;
+export default contactsSlice.reducer;
 
 export const fetchContacts = createAsyncThunk(
   'contacts',

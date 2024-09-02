@@ -1,6 +1,6 @@
 import PropTypes from 'prop-types';
 import { useNavigate } from 'react-router-dom';
-import MBTodo from './MBTodo';
+import MBTodo from '../../components/MBTodo';
 
 const Table = ({ customers }) => {
   const navigate = useNavigate();
