@@ -56,7 +56,7 @@ const Table = ({ customers }) => {
               <button
                 key={filterValue}
                 type='button'
-                className={`btn btn-primary text-capitalize ${filterValue === filter ? 'active' : null}`}
+                className={`btn btn-secondary text-capitalize ${filterValue === filter ? 'active' : null}`}
                 onClick={() => handleFilterClick(filterValue)}
               >
                 {filterValue}
