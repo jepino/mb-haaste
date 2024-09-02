@@ -8,6 +8,46 @@ const initialState = {
   currentRequestId: null,
 };
 
+const handlePending = (state, action) => {
+  const { requestId } = action.meta;
+  if (state.status === 'idle') {
+    state.status = 'pending';
+    state.currentRequestId = requestId;
+  }
+};
+
+const handleRejected = (state, action) => {
+  const { requestId } = action.meta;
+  if (state.status === 'pending' && state.currentRequestId === requestId) {
+    state.status = 'idle';
+    state.error = action.error;
+    state.currentRequestId = null;
+  }
+};
+
+const createFulfilledHandler = updateStateData => (state, action) => {
+  const { requestId } = action.meta;
+  if (state.status === 'pending' && state.currentRequestId === requestId) {
+    state.status = 'idle';
+    state.currentRequestId = null;
+    updateStateData(state, action);
+  }
+};
+
+const handleFulfilledOverwrite = createFulfilledHandler((state, action) => {
+  state.data = action.payload;
+});
+
+const handleFulfilledConcat = createFulfilledHandler((state, action) => {
+  state.data = state.data.concat(action.payload);
+});
+
+const handleFulfilledUpdate = createFulfilledHandler((state, action) => {
+  state.data = state.data.map(customer =>
+    customer.id === action.payload.id ? action.payload : customer
+  );
+});
+
 // CUSTOMERS
 const customersSlice = createSlice({
   name: 'customers',
@@ -15,93 +55,18 @@ const customersSlice = createSlice({
   reducers: {},
   extraReducers: builder => {
     builder
-      .addCase(fetchCustomers.pending, (state, action) => {
-        const { requestId } = action.meta;
-        if (state.status === 'idle') {
-          state.status = 'pending';
-          state.currentRequestId = requestId;
-        }
-      })
-      .addCase(fetchCustomers.fulfilled, (state, action) => {
-        const { requestId } = action.meta;
-        if (
-          state.status === 'pending' &&
-          state.currentRequestId === requestId
-        ) {
-          state.status = 'idle';
-          state.data = action.payload;
-          state.currentRequestId = null;
-        }
-      })
-      .addCase(fetchCustomers.rejected, (state, action) => {
-        const { requestId } = action.meta;
-        if (
-          state.status === 'pending' &&
-          state.currentRequestId === requestId
-        ) {
-          state.status = 'idle';
-          state.error = action.error;
-          state.currentRequestId = null;
-        }
-      })
-      .addCase(fetchCustomerById.pending, (state, action) => {
-        const { requestId } = action.meta;
-        if (state.status === 'idle') {
-          state.status = 'pending';
-          state.currentRequestId = requestId;
-        }
-      })
-      .addCase(fetchCustomerById.fulfilled, (state, action) => {
-        const { requestId } = action.meta;
-        if (
-          state.status === 'pending' &&
-          state.currentRequestId === requestId
-        ) {
-          state.status = 'idle';
-          state.data = state.data.concat(action.payload);
-          state.currentRequestId = null;
-        }
-      })
-      .addCase(fetchCustomerById.rejected, (state, action) => {
-        const { requestId } = action.meta;
-        if (
-          state.status === 'pending' &&
-          state.currentRequestId === requestId
-        ) {
-          state.status = 'idle';
-          state.error = action.error;
-          state.currentRequestId = null;
-        }
-      })
-      .addCase(createCustomer.pending, (state, action) => {
-        const { requestId } = action.meta;
-        if (state.status === 'idle') {
-          state.status = 'pending';
-          state.currentRequestId = requestId;
-        }
-      })
-      .addCase(createCustomer.fulfilled, (state, action) => {
-        const { requestId } = action.meta;
-        if (
-          state.status === 'pending' &&
-          state.currentRequestId === requestId
-        ) {
-          state.status = 'idle';
-          state.data = state.data.concat(action.payload);
-          state.currentRequestId = null;
-        }
-      })
-      .addCase(createCustomer.rejected, (state, action) => {
-        const { requestId } = action.meta;
-        if (
-          state.status === 'pending' &&
-          state.currentRequestId === requestId
-        ) {
-          state.status = 'idle';
-          state.error = action.error;
-          state.currentRequestId = null;
-        }
-      });
+      .addCase(fetchCustomers.pending, handlePending)
+      .addCase(fetchCustomers.fulfilled, handleFulfilledOverwrite)
+      .addCase(fetchCustomers.rejected, handleRejected)
+      .addCase(fetchCustomerById.pending, handlePending)
+      .addCase(fetchCustomerById.fulfilled, handleFulfilledConcat)
+      .addCase(fetchCustomerById.rejected, handleRejected)
+      .addCase(createCustomer.pending, handlePending)
+      .addCase(createCustomer.fulfilled, handleFulfilledConcat)
+      .addCase(createCustomer.rejected, handleRejected)
+      .addCase(updateCustomer.pending, handlePending)
+      .addCase(updateCustomer.fulfilled, handleFulfilledUpdate)
+      .addCase(updateCustomer.rejected, handleRejected);
   },
 });
 export default customersSlice.reducer;
@@ -142,6 +107,29 @@ export const createCustomer = createAsyncThunk(
   async data => {
     const result = await client(`/api/customers`, { data, method: 'POST' });
     return result;
+  },
+  {
+    condition: ({ name, country, isActive }) => {
+      const isActiveIsBool = isActive === true || isActive === false;
+      return !!name && !!country && isActiveIsBool;
+    },
+  }
+);
+
+export const updateCustomer = createAsyncThunk(
+  'customers/update',
+  async data => {
+    const result = await client(`/api/customers/${data.id}`, {
+      data,
+      method: 'PUT',
+    });
+    return result;
+  },
+  {
+    condition: ({ id, name, country, isActive }) => {
+      const isActiveIsBool = isActive === true || isActive === false;
+      return id && name && country && isActiveIsBool;
+    },
   }
 );
 

@@ -27,7 +27,7 @@ const CustomerListPage = () => {
       </div>
       <div>
         {error ? (
-          <div className='alert alert-danger d-inline-block' role='alert'>
+          <div className='alert alert-danger d-block mt-3' role='alert'>
             {error.message}
           </div>
         ) : null}
