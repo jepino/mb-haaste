@@ -51,28 +51,30 @@ npm run dev --workspace frontend
 
 ## Structure
 
-| Folder    | File                  | Details                                                                                       |
-| --------- | --------------------- | --------------------------------------------------------------------------------------------- |
-| /backend  |                       |                                                                                               |
-| ./app/    | app.js                | Configure Express server middlewares/routes/error handlers/etc                                |
-| ./app/    | config.js             | Configurations from env                                                                       |
-| ./app/    | errorHandler.js       | Catch and send errors to client                                                               |
-| ./app/    | index.js              | Starts express server                                                                         |
-| ./app/    | models.js             | Initializes simple JSON ORM for `customers/contacts/customerContacts`                         |
-| ./app/    | routes.js             | CRUD-routes                                                                                   |
-| ./        | database.json         | App "database". NOTE: Created on after initial startup                                        |
-| ./        | initial-database.json | Backup database                                                                               |
-| /frontend |                       |                                                                                               |
-| ./src/    | api.jsx               | Helper to make requests using `window.fetch`                                                  |
-| ./src/    | App.jsx               | Application router setup                                                                      |
-| ./src/    | \*Slices.jsx          | Redux state helpers [(redux-toolkit)](https://redux-toolkit.js.org/api/createAsyncThunk)      |
-| ./src/    | \*Table.jsx           | Table components                                                                              |
-| ./src/    | ErrorPage.jsx         | Fallback route                                                                                |
-| ./src/    | main.jsx              | Initialize react                                                                              |
-| ./src/    | MBTodo.jsx            | Component to help you along your journey. Add `isCompleted` prop to hide                      |
-| ./src/    | Pages.jsx             | Views                                                                                         |
-| ./src/    | store.jsx             | Redux store [(Redux Toolkit Quick Start)](https://redux-toolkit.js.org/tutorials/quick-start) |
-| ./        | vite.config.js        | Vite configuration                                                                            |
+| Folder             | File                  | Details                                                                                       |
+| ------------------ | --------------------- | --------------------------------------------------------------------------------------------- |
+| /backend           |                       |                                                                                               |
+| ./app/             | app.js                | Configure Express server middlewares/routes/error handlers/etc                                |
+| ./app/             | config.js             | Configurations from env                                                                       |
+| ./app/             | errorHandler.js       | Catch and send errors to client                                                               |
+| ./app/             | index.js              | Starts express server                                                                         |
+| ./app/             | models.js             | Initializes simple JSON ORM for `customers/contacts/customerContacts`                         |
+| ./app/routers/     | \*Router.js           | CRUD-routes for `customers/contacts/customerContacts`                                         |
+| ./app/routers/     | index.js              | API router                                                                                    |
+| ./                 | database.json         | App "database". NOTE: Created on after initial startup                                        |
+| ./                 | initial-database.json | Backup database                                                                               |
+| /frontend          |                       |                                                                                               |
+| ./src/app/         | api.jsx               | Helper to make requests using `window.fetch`                                                  |
+| ./src/app/         | store.jsx             | Redux store [(Redux Toolkit Quick Start)](https://redux-toolkit.js.org/tutorials/quick-start) |
+| ./src/components/  | ErrorPage.jsx         | Fallback route                                                                                |
+| ./src/components/  | NavBar.jsx            | Top-level navigation bar component                                                            |
+| ./src/components/  | MBTodo.jsx            | Component to help you along your journey. Add `isCompleted` prop to hide                      |
+| ./src/features/\*/ | \*Slice.jsx           | Redux state helpers [(redux-toolkit)](https://redux-toolkit.js.org/api/createAsyncThunk)      |
+| ./src/features/\*/ | \*Table.jsx           | Table components                                                                              |
+| ./src/features/\*/ | \*Page.jsx            | Views                                                                                         |
+| ./src/             | App.jsx               | Application router setup                                                                      |
+| ./src/             | main.jsx              | Initialize react                                                                              |
+| ./                 | vite.config.js        | Vite configuration                                                                            |
 
 ---
 

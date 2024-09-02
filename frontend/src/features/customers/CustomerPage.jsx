@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useParams } from 'react-router-dom';
 import MBTodo from '../../components/MBTodo';
 import { fetchCustomerById } from './customersSlice';
-import CustomerContactTable from './customerContacts/CustomerContactTable';
+import CustomerContactTable from '../customerContacts/CustomerContactTable';
 
 const useCustomer = id => {
   const dispatch = useDispatch();
