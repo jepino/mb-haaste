@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchContacts } from './contactsSlice';
 import ContactTable from './ContactTable';
@@ -10,11 +10,12 @@ const useContacts = () => {
   }, [dispatch]);
   const refetch = () => dispatch(fetchContacts());
   const { data, status, error } = useSelector(state => state.contacts);
-  return { data, status, error, refetch };
+  const contactsLoading = useMemo(() => status === 'pending', [status]);
+  return { data, loading: contactsLoading, error, refetch };
 };
 
 const ContactListPage = () => {
-  const { data: contacts, status, error, refetch } = useContacts();
+  const { data: contacts, loading, error, refetch } = useContacts();
   return (
     <div className='m-5'>
       <h1 className='fw-bold'>Contacts</h1>
@@ -26,7 +27,7 @@ const ContactListPage = () => {
           {error.message}
         </div>
       ) : null}
-      <div>{status === 'pending' ? 'Loading...' : <ContactTable contacts={contacts} />}</div>
+      <div>{loading ? 'Loading...' : <ContactTable contacts={contacts} />}</div>
     </div>
   );
 };

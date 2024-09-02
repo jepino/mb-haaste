@@ -18,7 +18,7 @@ const useCustomer = id => {
 
   const { data: customers, status, error } = useSelector(state => state.customers);
   const customer = customers.find(customer => customer.id === id);
-  const customerLoading = useMemo(() => status === 'loading', [status]);
+  const customerLoading = useMemo(() => status === 'pending', [status]);
   return { data: customer, loading: customerLoading, error, update };
 };
 
@@ -49,6 +49,10 @@ const CustomerPage = () => {
     update(name, country, isActive);
   };
 
+  useEffect(() => {
+    console.log('loading status changed to:', loading);
+  }, [loading]);
+
   return (
     <div className='m-5'>
       <h1 className='fw-bold'>Customer</h1>
@@ -56,7 +60,7 @@ const CustomerPage = () => {
         <div>
           <form className='mb-3' onSubmit={handleSubmit}>
             <MBTodo
-              isCompleted={false}
+              isCompleted
               task='Create solution to update customers `isActivity` field. NOTE: update api `/api/customer/:customerId` expects complete customer data to be sent along request body'
             />
             <div className='d-flex flex-row gap-4 mb-3'>
@@ -102,11 +106,11 @@ const CustomerPage = () => {
             </div>
             <div className='row'>
               <div className='col-1'>
-                <button className='btn btn-primary' type='submit' disabled={loading}>
+                <button className='btn btn-primary w-100' type='submit' disabled={loading}>
                   Save
                 </button>
               </div>
-              <div className='col-1 d-flex justify-content-center align-items-center'>
+              <div className='col-1 d-flex justify-content-start align-items-center '>
                 {loading && (
                   <div className='spinner-border' role='status'>
                     <span className='visually-hidden'>Loading...</span>

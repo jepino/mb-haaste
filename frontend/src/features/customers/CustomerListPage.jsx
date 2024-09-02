@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchCustomers } from './customersSlice';
 import CustomerTable from './CustomerTable';
@@ -11,11 +11,12 @@ const useCustomers = () => {
   }, [dispatch]);
   const refetch = () => dispatch(fetchCustomers());
   const { data, status, error } = useSelector(state => state.customers);
-  return { data, status, error, refetch };
+  const customersLoading = useMemo(() => status === 'pending', [status]);
+  return { data, loading: customersLoading, error, refetch };
 };
 
 const CustomerListPage = () => {
-  const { data: customers, status, error, refetch } = useCustomers();
+  const { data: customers, loading, error, refetch } = useCustomers();
   return (
     <div className='m-5'>
       <h1 className='fw-bold'>Customers</h1>
@@ -31,7 +32,7 @@ const CustomerListPage = () => {
             {error.message}
           </div>
         ) : null}
-        {status === 'pending' ? 'Loading...' : <CustomerTable customers={customers} />}
+        {loading ? 'Loading...' : <CustomerTable customers={customers} />}
       </div>
     </div>
   );
