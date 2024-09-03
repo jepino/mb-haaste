@@ -4,7 +4,7 @@ import { BadRequest, InternalServerError } from '../errorHandler.js';
 import { CustomerContacts } from '../models.js';
 import { HttpStatus } from './index.js';
 
-const customerContactRouter = express.Router();
+const customerContactRouter = express.Router({ mergeParams: true });
 
 const checkCustomerId = (req, _res, next) => {
   const { customerId } = req.params;

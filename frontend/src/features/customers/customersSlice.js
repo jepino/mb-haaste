@@ -1,5 +1,6 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import { client } from '../../app/api';
+import { handleAsyncThunk } from '../../app/asyncThunksHandler';
 
 const initialState = {
   data: [],
@@ -8,71 +9,32 @@ const initialState = {
   currentRequestId: null,
 };
 
-const handlePending = (state, action) => {
-  const { requestId } = action.meta;
-  if (state.status === 'idle') {
-    state.status = 'pending';
-    state.currentRequestId = requestId;
-  }
-};
-
-const handleRejected = (state, action) => {
-  const { requestId } = action.meta;
-  if (state.status === 'pending' && state.currentRequestId === requestId) {
-    state.status = 'idle';
-    state.error = action.error;
-    state.currentRequestId = null;
-  }
-};
-
-const createFulfilledHandler = updateStateData => (state, action) => {
-  const { requestId } = action.meta;
-  if (state.status === 'pending' && state.currentRequestId === requestId) {
-    state.status = 'idle';
-    state.currentRequestId = null;
-    updateStateData(state, action);
-  }
-};
-
-const handleFulfilledOverwrite = createFulfilledHandler((state, action) => {
-  state.data = action.payload;
-});
-
-const handleFulfilledConcat = createFulfilledHandler((state, action) => {
-  state.data = state.data.concat(action.payload);
-});
-
-const handleFulfilledUpdate = createFulfilledHandler((state, action) => {
-  state.data = state.data.map(customer =>
-    customer.id === action.payload.id ? action.payload : customer
-  );
-});
-
 // CUSTOMERS
 const customersSlice = createSlice({
   name: 'customers',
   initialState,
   reducers: {},
   extraReducers: builder => {
-    builder
-      .addCase(fetchCustomers.pending, handlePending)
-      .addCase(fetchCustomers.fulfilled, handleFulfilledOverwrite)
-      .addCase(fetchCustomers.rejected, handleRejected)
-      .addCase(fetchCustomerById.pending, handlePending)
-      .addCase(fetchCustomerById.fulfilled, handleFulfilledConcat)
-      .addCase(fetchCustomerById.rejected, handleRejected)
-      .addCase(createCustomer.pending, handlePending)
-      .addCase(createCustomer.fulfilled, handleFulfilledConcat)
-      .addCase(createCustomer.rejected, handleRejected)
-      .addCase(updateCustomer.pending, handlePending)
-      .addCase(updateCustomer.fulfilled, handleFulfilledUpdate)
-      .addCase(updateCustomer.rejected, handleRejected);
+    handleAsyncThunk(builder, fetchCustomers, (state, action) => {
+      state.data = action.payload;
+    });
+    handleAsyncThunk(builder, fetchCustomerById, (state, action) => {
+      state.data = state.data.concat(action.payload);
+    });
+    handleAsyncThunk(builder, createCustomer, (state, action) => {
+      state.data = state.data.concat(action.payload);
+    });
+    handleAsyncThunk(builder, updateCustomer, (state, action) => {
+      state.data = state.data.map(customer =>
+        customer.id === action.payload.id ? action.payload : customer
+      );
+    });
   },
 });
 export default customersSlice.reducer;
 
 export const fetchCustomers = createAsyncThunk(
-  'customers',
+  'customers/fetchAll',
   async () => {
     const result = await client('/api/customers');
     return result;

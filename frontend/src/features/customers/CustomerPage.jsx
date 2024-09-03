@@ -49,10 +49,6 @@ const CustomerPage = () => {
     update(name, country, isActive);
   };
 
-  useEffect(() => {
-    console.log('loading status changed to:', loading);
-  }, [loading]);
-
   return (
     <div className='m-5'>
       <h1 className='fw-bold'>Customer</h1>
