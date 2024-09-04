@@ -119,6 +119,12 @@
       "name": "Haag Group",
       "country": "Taiwan",
       "isActive": false
+    },
+    "id-1725042494337": {
+      "id": "id-1725042494337",
+      "name": "Charles LeTest",
+      "country": "Monaco",
+      "isActive": true
     }
   },
   "contacts": {
@@ -173,5 +179,32 @@
       "lastName": "Dickens"
     }
   },
-  "customerContacts": {}
+  "customerContacts": {
+    "id-1725042494337": [
+      {
+        "parentId": "id-1725042494337",
+        "subId": "id-35666"
+      },
+      {
+        "parentId": "id-1725042494337",
+        "subId": "id-12918"
+      },
+      {
+        "parentId": "id-1725042494337",
+        "subId": "id-6892"
+      },
+      {
+        "parentId": "id-1725042494337",
+        "subId": "id-57918"
+      },
+      {
+        "parentId": "id-1725042494337",
+        "subId": "id-79745"
+      },
+      {
+        "parentId": "id-1725042494337",
+        "subId": "id-26348"
+      }
+    ]
+  }
 }

@@ -1,10 +1,10 @@
 import PropTypes from 'prop-types';
 import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { fetchCustomerContacts, selectCustomerContacts, selectCustomerLoading } from './customersSlice';
+import { fetchCustomerContacts, removeCustomerContact, selectCustomerContacts, selectCustomerLoading } from './customersSlice';
 import { useContact } from '../contacts/hooks';
 
-const CustomerContactRow = ({ id, index }) => {
+const CustomerContactRow = ({ id, index, onDelete }) => {
   const contact = useContact(id);
 
   if (!contact) return null;
@@ -14,7 +14,9 @@ const CustomerContactRow = ({ id, index }) => {
       <td scope='row'>{index + 1}</td>
       <td>{`${contact.firstName} ${contact.lastName}`}</td>
       <td>
-        <button className='btn btn-danger'>Delete</button>
+        <button className='btn btn-danger' onClick={() => onDelete(id)}>
+          Delete
+        </button>
       </td>
     </tr>
   );
@@ -23,25 +25,30 @@ const CustomerContactRow = ({ id, index }) => {
 CustomerContactRow.propTypes = {
   id: PropTypes.string.isRequired,
   index: PropTypes.number.isRequired,
+  onDelete: PropTypes.func.isRequired,
 };
 
-const useCustomerContacts = id => {
+const useCustomerContacts = customerId => {
   const dispatch = useDispatch();
   useEffect(() => {
-    dispatch(fetchCustomerContacts(id));
-  }, [id, dispatch]);
+    dispatch(fetchCustomerContacts(customerId));
+  }, [customerId, dispatch]);
 
-  const contactIds = useSelector(state => selectCustomerContacts(state, id));
+  const deleteCustomerContact = contactId => {
+    dispatch(removeCustomerContact({ customerId, contactId }));
+  };
+
+  const contactIds = useSelector(state => selectCustomerContacts(state, customerId));
   const loading = useSelector(selectCustomerLoading);
 
-  return { contactIds, loading };
+  return { contactIds, loading, deleteCustomerContact };
 };
 
 const CustomerContactTable = ({ customerId }) => {
-  // MB-TODO: Implement fetch customer's contacts
+  // MB-DONE: Implement fetch customer's contacts
   // MB-TODO: Implement add contact to customer
-  // MB-TODO: Implement remove contact of customer
-  const { contactIds, loading } = useCustomerContacts(customerId);
+  // MB-DONE: Implement remove contact of customer
+  const { contactIds, loading, deleteCustomerContact } = useCustomerContacts(customerId);
 
   if (loading) {
     return <div>Loading...</div>;
@@ -58,7 +65,7 @@ const CustomerContactTable = ({ customerId }) => {
       </thead>
       <tbody>
         {contactIds.map((contactId, index) => (
-          <CustomerContactRow key={contactId} id={contactId} index={index} />
+          <CustomerContactRow key={contactId} id={contactId} index={index} onDelete={deleteCustomerContact} />
         ))}
       </tbody>
     </table>

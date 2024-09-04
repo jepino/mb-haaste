@@ -97,6 +97,25 @@ export const fetchCustomerContacts = createAsyncThunk(
 
 // MB-TODO: create action for creating customer contacts. NOTE: remember to add them to `customerSlice`
 
+export const removeCustomerContact = createAsyncThunk(
+  'customers/removeContact',
+  async ({ customerId, contactId }) => {
+    await client(`/api/customers/${customerId}/contacts/${contactId}`, {
+      method: 'DELETE',
+    });
+    return { customerId, contactId };
+  },
+  {
+    condition: ({ contactId }, { getState }) => {
+      const customer = selectCustomerById(getState());
+
+      return (
+        customer && customer.contacts.some(contact => contact === contactId)
+      );
+    },
+  }
+);
+
 const customerAdapter = createEntityAdapter({
   selectId: customer => customer.id,
 });
@@ -118,7 +137,12 @@ const customersSlice = createSlice({
       .addCase(fetchCustomerById.fulfilled, customerAdapter.upsertOne)
       .addCase(createCustomer.fulfilled, customerAdapter.addOne)
       .addCase(updateCustomer.fulfilled, customerAdapter.upsertOne)
-      .addCase(fetchCustomerContacts.fulfilled, customerAdapter.updateOne);
+      .addCase(fetchCustomerContacts.fulfilled, customerAdapter.updateOne)
+      .addCase(removeCustomerContact.fulfilled, (state, action) => {
+        const { customerId, contactId } = action.payload;
+        const customer = state.entities[customerId];
+        customer.contacts = customer.contacts.filter(c => c !== contactId);
+      });
   },
 });
 export default customersSlice.reducer;

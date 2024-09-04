@@ -13,10 +13,12 @@ export const client = async (
   };
 
   const response = await fetch(`${endpoint}`, config);
-  const responseData = await response.json();
-  if (response.ok) {
-    return responseData;
-  } else {
-    return Promise.reject(responseData);
+  if (!response.ok) {
+    return Promise.reject(await response.json());
+  }
+  try {
+    return await response.json();
+  } catch (_e) {
+    return response;
   }
 };

@@ -56,7 +56,7 @@ const CustomerPage = () => {
         <div>
           <form className='mb-3' onSubmit={handleSubmit}>
             <MBTodo
-              isCompleted
+              isCompleted={true}
               task='Create solution to update customers `isActivity` field. NOTE: update api `/api/customer/:customerId` expects complete customer data to be sent along request body'
             />
             <div className='d-flex flex-row gap-4 mb-3'>
@@ -111,7 +111,7 @@ const CustomerPage = () => {
 
           <div>
             <p className='fw-bold'>Customer contacts</p>
-            <MBTodo isCompleted={false} task='Continue CustomerContact table implementation' />
+            <MBTodo isCompleted={true} task='Continue CustomerContact table implementation' />
             <CustomerContactTable customerId={customerId} />
           </div>
         </div>
