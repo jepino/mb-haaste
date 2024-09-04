@@ -6,9 +6,11 @@ import {
 } from '@reduxjs/toolkit';
 import { client } from '../../app/api';
 import {
-  handleAsyncThunk,
+  createMetaFulfilledHandler,
+  handleMetaPending,
+  handleMetaRejected,
   initialStateMetadata,
-} from '../../app/asyncThunksHandler';
+} from '../../app/defaultAsyncHandlers';
 
 const contactsAdapter = createEntityAdapter({
   selectId: contact => contact.id,
@@ -17,15 +19,29 @@ const contactsAdapter = createEntityAdapter({
 const initialState = contactsAdapter.getInitialState(initialStateMetadata);
 
 export const fetchContacts = createAsyncThunk(
-  'contacts',
+  'contacts/fetchAll',
   async () => {
     const result = await client('/api/contacts');
     return result;
   },
   {
     condition: (_args, { getState }) => {
-      const { contacts } = getState();
-      return contacts.status !== 'pending';
+      const status = selectContactsStatus(getState());
+      return status !== 'pending';
+    },
+  }
+);
+
+export const fetchContactById = createAsyncThunk(
+  'contacts/fetchById',
+  async id => {
+    const result = await client(`/api/contacts/${id}`);
+    return result;
+  },
+  {
+    condition: (id, { getState }) => {
+      const contact = selectContactById(getState(), id);
+      return !contact;
     },
   }
 );
@@ -35,7 +51,14 @@ const contactsSlice = createSlice({
   initialState,
   reducers: {},
   extraReducers: builder => {
-    handleAsyncThunk(builder, fetchContacts, contactsAdapter.setAll);
+    builder
+      .addCase(fetchContacts.pending, handleMetaPending)
+      .addCase(
+        fetchContacts.fulfilled,
+        createMetaFulfilledHandler(contactsAdapter.setAll)
+      )
+      .addCase(fetchContacts.rejected, handleMetaRejected)
+      .addCase(fetchContactById.fulfilled, contactsAdapter.upsertOne);
   },
 });
 export default contactsSlice.reducer;

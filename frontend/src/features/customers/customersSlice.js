@@ -6,9 +6,11 @@ import {
 } from '@reduxjs/toolkit';
 import { client } from '../../app/api';
 import {
-  handleAsyncThunk,
+  createMetaFulfilledHandler,
+  handleMetaPending,
+  handleMetaRejected,
   initialStateMetadata,
-} from '../../app/asyncThunksHandler';
+} from '../../app/defaultAsyncHandlers';
 import { CustomerFilter } from './customerFilter';
 
 export const fetchCustomers = createAsyncThunk(
@@ -19,8 +21,8 @@ export const fetchCustomers = createAsyncThunk(
   },
   {
     condition: (_args, { getState }) => {
-      const { customers } = getState();
-      return customers.status !== 'pending';
+      const status = selectCustomerStatus(getState());
+      return status !== 'pending';
     },
   }
 );
@@ -33,11 +35,11 @@ export const fetchCustomerById = createAsyncThunk(
   },
   {
     condition: (id, { getState }) => {
-      const { customers } = getState();
-      return (
-        customers.status !== 'pending' &&
-        !customers.data.some(customer => customer.id === id)
-      );
+      const state = getState();
+      const status = selectCustomerStatus(state);
+      const customer = selectCustomerById(state, id);
+
+      return status !== 'pending' && !customer;
     },
   }
 );
@@ -63,12 +65,32 @@ export const updateCustomer = createAsyncThunk(
       data,
       method: 'PUT',
     });
-    return result;
+    return { id: data.id, changes: result };
   },
   {
     condition: ({ id, name, country, isActive }) => {
       const isActiveIsBool = isActive === true || isActive === false;
       return id && name && country && isActiveIsBool;
+    },
+  }
+);
+
+export const fetchCustomerContacts = createAsyncThunk(
+  'customers/fetchContacts',
+  async id => {
+    const result = await client(`/api/customers/${id}/contacts`);
+    const mappedContactIds = result.map(
+      customerContact => customerContact.contactId
+    );
+    return { id, changes: { contacts: mappedContactIds } };
+  },
+  {
+    condition: (_id, { getState }) => {
+      const state = getState();
+      const customer = selectCustomerById(state);
+      const status = selectCustomerStatus(state);
+
+      return status !== 'pending' && customer && !customer.contacts;
     },
   }
 );
@@ -86,10 +108,17 @@ const customersSlice = createSlice({
   initialState,
   reducers: {},
   extraReducers: builder => {
-    handleAsyncThunk(builder, fetchCustomers, customerAdapter.setAll);
-    handleAsyncThunk(builder, fetchCustomerById, customerAdapter.setOne);
-    handleAsyncThunk(builder, createCustomer, customerAdapter.setOne);
-    handleAsyncThunk(builder, updateCustomer, customerAdapter.updateOne);
+    builder
+      .addCase(fetchCustomers.pending, handleMetaPending)
+      .addCase(fetchCustomers.rejected, handleMetaRejected)
+      .addCase(
+        fetchCustomers.fulfilled,
+        createMetaFulfilledHandler(customerAdapter.setAll)
+      )
+      .addCase(fetchCustomerById.fulfilled, customerAdapter.upsertOne)
+      .addCase(createCustomer.fulfilled, customerAdapter.addOne)
+      .addCase(updateCustomer.fulfilled, customerAdapter.upsertOne)
+      .addCase(fetchCustomerContacts.fulfilled, customerAdapter.updateOne);
   },
 });
 export default customersSlice.reducer;
@@ -128,4 +157,9 @@ export const selectFilteredCustomerIds = createSelector(
       }
     });
   }
+);
+
+export const selectCustomerContacts = createSelector(
+  selectCustomerById,
+  customer => customer.contacts || []
 );

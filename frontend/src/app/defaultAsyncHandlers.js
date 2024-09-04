@@ -4,7 +4,7 @@ export const initialStateMetadata = {
   currentRequestId: null,
 };
 
-const handlePending = (state, action) => {
+export const handleMetaPending = (state, action) => {
   const { requestId } = action.meta;
   if (state.status === 'idle') {
     state.status = 'pending';
@@ -12,7 +12,7 @@ const handlePending = (state, action) => {
   }
 };
 
-const handleRejected = (state, action) => {
+export const handleMetaRejected = (state, action) => {
   const { requestId } = action.meta;
   if (state.status === 'pending' && state.currentRequestId === requestId) {
     state.status = 'idle';
@@ -21,18 +21,11 @@ const handleRejected = (state, action) => {
   }
 };
 
-const createFulfilledHandler = updateState => (state, action) => {
+export const createMetaFulfilledHandler = updateState => (state, action) => {
   const { requestId } = action.meta;
   if (state.status === 'pending' && state.currentRequestId === requestId) {
     state.status = 'idle';
     state.currentRequestId = null;
     updateState(state, action);
   }
-};
-
-export const handleAsyncThunk = (builder, asyncThunk, onFulfilled) => {
-  builder
-    .addCase(asyncThunk.pending, handlePending)
-    .addCase(asyncThunk.rejected, handleRejected)
-    .addCase(asyncThunk.fulfilled, createFulfilledHandler(onFulfilled));
 };

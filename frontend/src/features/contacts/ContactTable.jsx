@@ -1,23 +1,6 @@
-import PropTypes from 'prop-types';
 import { useSelector } from 'react-redux';
-import { selectContactById, selectContactIds, selectContactsError, selectContactsLoading } from './contactsSlice';
-
-const ContactRow = ({ id, index }) => {
-  const contact = useSelector(state => selectContactById(state, id));
-
-  return (
-    <tr key={id}>
-      <th scope='row'>{index + 1}</th>
-      <td>{`${contact.firstName} ${contact.lastName}`}</td>
-      <td>{contact.country}</td>
-    </tr>
-  );
-};
-
-ContactRow.propTypes = {
-  id: PropTypes.string.isRequired,
-  index: PropTypes.number.isRequired,
-};
+import { selectContactIds, selectContactsError, selectContactsLoading } from './contactsSlice';
+import ContactRow from './ContactRow';
 
 const ContactTable = () => {
   const contactIds = useSelector(selectContactIds);
