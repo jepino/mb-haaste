@@ -5,8 +5,11 @@ import {
   createSlice,
 } from '@reduxjs/toolkit';
 import { client } from '../../app/api';
-import { handleAsyncThunk } from '../../app/asyncThunksHandler';
-import { FilterState } from './CustomerTable';
+import {
+  handleAsyncThunk,
+  initialStateMetadata,
+} from '../../app/asyncThunksHandler';
+import { CustomerFilter } from './customerFilter';
 
 export const fetchCustomers = createAsyncThunk(
   'customers/fetchAll',
@@ -76,11 +79,7 @@ const customerAdapter = createEntityAdapter({
   selectId: customer => customer.id,
 });
 
-const initialState = customerAdapter.getInitialState({
-  status: 'idle',
-  error: null,
-  currentRequestId: null,
-});
+const initialState = customerAdapter.getInitialState(initialStateMetadata);
 
 const customersSlice = createSlice({
   name: 'customers',
@@ -114,13 +113,13 @@ export const selectFilteredCustomerIds = createSelector(
   (ids, entities, filter) => {
     return ids.filter(id => {
       switch (filter) {
-        case FilterState.ALL: {
+        case CustomerFilter.ALL: {
           return true;
         }
-        case FilterState.ACTIVE: {
+        case CustomerFilter.ACTIVE: {
           return entities[id].isActive;
         }
-        case FilterState.INACTIVE: {
+        case CustomerFilter.INACTIVE: {
           return !entities[id].isActive;
         }
         default: {

@@ -1,21 +1,38 @@
 import { useState } from 'react';
+import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { PropTypes } from 'prop-types';
 
 import MBTodo from '../../components/MBTodo';
-import { useSelector } from 'react-redux';
+import { CustomerFilter, customerFilterValues } from './customerFilter';
 import { selectCustomerById, selectCustomerError, selectCustomerLoading, selectFilteredCustomerIds } from './customersSlice';
 
-export const FilterState = Object.freeze({
-  ALL: 'all',
-  ACTIVE: 'active',
-  INACTIVE: 'inactive',
-});
+const CustomerRow = ({ id, index }) => {
+  const customer = useSelector(state => selectCustomerById(state, id));
 
-const filterValues = Object.values(FilterState);
+  const navigate = useNavigate();
+
+  const handleClick = () => {
+    navigate(id);
+  };
+
+  return (
+    <tr key={id} className='' onClick={handleClick}>
+      <th scope='row'>{index + 1}</th>
+      <td>{customer.name}</td>
+      <td>{customer.country}</td>
+      <td>{customer.isActive ? '✅' : '❌'}</td>
+    </tr>
+  );
+};
+
+CustomerRow.propTypes = {
+  id: PropTypes.string.isRequired,
+  index: PropTypes.number.isRequired,
+};
 
 const useCustomerTable = () => {
-  const [filter, setFilter] = useState(FilterState.ALL);
+  const [filter, setFilter] = useState(CustomerFilter.ALL);
   const filteredIds = useSelector(state => selectFilteredCustomerIds(state, filter));
   const loading = useSelector(selectCustomerLoading);
   const error = useSelector(selectCustomerError);
@@ -48,7 +65,7 @@ const CustomerTable = () => {
             <MBTodo isCompleted={true} task='Create solution to filters customers by activity' />
           </div>
           <div className='btn-group mt-2' role='group' aria-label='activity status filters'>
-            {filterValues.map(filterValue => (
+            {customerFilterValues.map(filterValue => (
               <button
                 key={filterValue}
                 type='button'
@@ -81,27 +98,3 @@ const CustomerTable = () => {
 };
 
 export default CustomerTable;
-
-const CustomerRow = ({ id, index }) => {
-  const customer = useSelector(state => selectCustomerById(state, id));
-
-  const navigate = useNavigate();
-
-  const handleClick = () => {
-    navigate(id);
-  };
-
-  return (
-    <tr key={id} className='' onClick={handleClick}>
-      <th scope='row'>{index + 1}</th>
-      <td>{customer.name}</td>
-      <td>{customer.country}</td>
-      <td>{customer.isActive ? '✅' : '❌'}</td>
-    </tr>
-  );
-};
-
-CustomerRow.propTypes = {
-  id: PropTypes.string,
-  index: PropTypes.number,
-};

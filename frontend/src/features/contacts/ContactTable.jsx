@@ -1,6 +1,39 @@
 import PropTypes from 'prop-types';
+import { useSelector } from 'react-redux';
+import { selectContactById, selectContactIds, selectContactsError, selectContactsLoading } from './contactsSlice';
 
-const Table = ({ contacts }) => {
+const ContactRow = ({ id, index }) => {
+  const contact = useSelector(state => selectContactById(state, id));
+
+  return (
+    <tr key={id}>
+      <th scope='row'>{index + 1}</th>
+      <td>{`${contact.firstName} ${contact.lastName}`}</td>
+      <td>{contact.country}</td>
+    </tr>
+  );
+};
+
+ContactRow.propTypes = {
+  id: PropTypes.string.isRequired,
+  index: PropTypes.number.isRequired,
+};
+
+const ContactTable = () => {
+  const contactIds = useSelector(selectContactIds);
+  const loading = useSelector(selectContactsLoading);
+  const error = useSelector(selectContactsError);
+
+  if (loading) {
+    return 'Loading...';
+  } else if (error) {
+    return (
+      <div className='alert alert-danger d-inline-block' role='alert'>
+        {error.message}
+      </div>
+    );
+  }
+
   return (
     <table className='table'>
       <thead>
@@ -10,27 +43,12 @@ const Table = ({ contacts }) => {
         </tr>
       </thead>
       <tbody>
-        {contacts.map((contact, index) => {
-          return (
-            <tr key={index}>
-              <th scope='row'>{index + 1}</th>
-              <td>{`${contact.firstName} ${contact.lastName}`}</td>
-              <td>{contact.country}</td>
-            </tr>
-          );
-        })}
+        {contactIds.map((id, index) => (
+          <ContactRow key={id} id={id} index={index} />
+        ))}
       </tbody>
     </table>
   );
 };
 
-Table.propTypes = {
-  contacts: PropTypes.arrayOf(
-    PropTypes.shape({
-      firstName: PropTypes.string,
-      lastName: PropTypes.string,
-    })
-  ),
-};
-
-export default Table;
+export default ContactTable;

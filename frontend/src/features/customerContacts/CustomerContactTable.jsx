@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types';
 
 // eslint-disable-next-line no-unused-vars
-const Table = ({ customerId }) => {
+const CustomerContactTable = ({ customerId }) => {
   const customerContacts = [
     // { customerId: 'id-1', contactId: 'id-11' } // MB-TODO: Example response
   ];
@@ -34,8 +34,8 @@ const Table = ({ customerId }) => {
   );
 };
 
-Table.propTypes = {
-  customerId: PropTypes.number.isRequired,
+CustomerContactTable.propTypes = {
+  customerId: PropTypes.string.isRequired,
 };
 
-export default Table;
+export default CustomerContactTable;

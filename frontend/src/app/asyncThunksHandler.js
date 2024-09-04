@@ -1,3 +1,9 @@
+export const initialStateMetadata = {
+  status: 'idle',
+  error: null,
+  currentRequestId: null,
+};
+
 const handlePending = (state, action) => {
   const { requestId } = action.meta;
   if (state.status === 'idle') {

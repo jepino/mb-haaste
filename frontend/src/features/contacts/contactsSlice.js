@@ -1,52 +1,20 @@
-import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
+import {
+  createAsyncThunk,
+  createEntityAdapter,
+  createSelector,
+  createSlice,
+} from '@reduxjs/toolkit';
 import { client } from '../../app/api';
+import {
+  handleAsyncThunk,
+  initialStateMetadata,
+} from '../../app/asyncThunksHandler';
 
-const initialState = {
-  data: [],
-  status: 'idle',
-  error: null,
-  currentRequestId: null,
-};
-
-// CONTACTS
-const contactsSlice = createSlice({
-  name: 'contacts',
-  initialState,
-  reducers: {},
-  extraReducers: builder => {
-    builder
-      .addCase(fetchContacts.pending, (state, action) => {
-        const { requestId } = action.meta;
-        if (state.status === 'idle') {
-          state.status = 'pending';
-          state.currentRequestId = requestId;
-        }
-      })
-      .addCase(fetchContacts.fulfilled, (state, action) => {
-        const { requestId } = action.meta;
-        if (
-          state.status === 'pending' &&
-          state.currentRequestId === requestId
-        ) {
-          state.status = 'idle';
-          state.data = action.payload;
-          state.currentRequestId = null;
-        }
-      })
-      .addCase(fetchContacts.rejected, (state, action) => {
-        const { requestId } = action.meta;
-        if (
-          state.status === 'pending' &&
-          state.currentRequestId === requestId
-        ) {
-          state.status = 'idle';
-          state.error = action.error;
-          state.currentRequestId = null;
-        }
-      });
-  },
+const contactsAdapter = createEntityAdapter({
+  selectId: contact => contact.id,
 });
-export default contactsSlice.reducer;
+
+const initialState = contactsAdapter.getInitialState(initialStateMetadata);
 
 export const fetchContacts = createAsyncThunk(
   'contacts',
@@ -61,3 +29,27 @@ export const fetchContacts = createAsyncThunk(
     },
   }
 );
+
+const contactsSlice = createSlice({
+  name: 'contacts',
+  initialState,
+  reducers: {},
+  extraReducers: builder => {
+    handleAsyncThunk(builder, fetchContacts, contactsAdapter.setAll);
+  },
+});
+export default contactsSlice.reducer;
+
+export const {
+  selectAll: selectAllContacts,
+  selectById: selectContactById,
+  selectEntities: selectContactEntities,
+  selectIds: selectContactIds,
+} = contactsAdapter.getSelectors(state => state.contacts);
+
+const selectContactsStatus = state => state.contacts.status;
+export const selectContactsLoading = createSelector(
+  selectContactsStatus,
+  status => status === 'pending'
+);
+export const selectContactsError = state => state.contacts.error;

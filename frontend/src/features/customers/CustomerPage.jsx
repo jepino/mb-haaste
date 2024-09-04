@@ -112,7 +112,7 @@ const CustomerPage = () => {
           <div>
             <p className='fw-bold'>Customer contacts</p>
             <MBTodo isCompleted={false} task='Continue CustomerContact table implementation' />
-            <CustomerContactTable customerId={+customerId} />
+            <CustomerContactTable customerId={customerId} />
           </div>
         </div>
       ) : null}
