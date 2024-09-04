@@ -46,7 +46,7 @@ const useCustomerContacts = customerId => {
 
 const CustomerContactTable = ({ customerId }) => {
   // MB-DONE: Implement fetch customer's contacts
-  // MB-TODO: Implement add contact to customer
+  // MB-DONE: Implement add contact to customer
   // MB-DONE: Implement remove contact of customer
   const { contactIds, loading, deleteCustomerContact } = useCustomerContacts(customerId);
 
@@ -55,20 +55,22 @@ const CustomerContactTable = ({ customerId }) => {
   }
 
   return (
-    <table className='table table-hover'>
-      <thead>
-        <tr>
-          <th scope='col'>#</th>
-          <th scope='col'>Name</th>
-          <th scope='col'>Action</th>
-        </tr>
-      </thead>
-      <tbody>
-        {contactIds.map((contactId, index) => (
-          <CustomerContactRow key={contactId} id={contactId} index={index} onDelete={deleteCustomerContact} />
-        ))}
-      </tbody>
-    </table>
+    <div>
+      <table className='table table-hover'>
+        <thead>
+          <tr>
+            <th scope='col'>#</th>
+            <th scope='col'>Name</th>
+            <th scope='col'>Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          {contactIds.map((contactId, index) => (
+            <CustomerContactRow key={contactId} id={contactId} index={index} onDelete={deleteCustomerContact} />
+          ))}
+        </tbody>
+      </table>
+    </div>
   );
 };
 

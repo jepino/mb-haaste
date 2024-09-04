@@ -4,6 +4,7 @@ import { useParams } from 'react-router-dom';
 import MBTodo from '../../components/MBTodo';
 import { fetchCustomerById, selectCustomerById, selectCustomerError, selectCustomerLoading, updateCustomer } from './customersSlice';
 import CustomerContactTable from './CustomerContactTable';
+import NewCustomerContact from './NewCustomerContact';
 
 const useCustomer = id => {
   const dispatch = useDispatch();
@@ -107,6 +108,11 @@ const CustomerPage = () => {
 
           <div className={`alert alert-danger d-block ${error ? 'visible' : 'invisible'}`} role='alert'>
             {error ? error.message : null}
+          </div>
+
+          <div>
+            <p className='fw-bold'>Add customer contact</p>
+            <NewCustomerContact customerId={customerId} />
           </div>
 
           <div>

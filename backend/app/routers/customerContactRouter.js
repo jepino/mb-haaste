@@ -71,9 +71,14 @@ customerContactRouter.post('/', async (req, res) => {
     );
   }
 
-  return res
-    .status(HttpStatus.CREATED)
-    .send(await CustomerContacts.add(customerId, contactId));
+  const customerContact = await CustomerContacts.add(customerId, contactId);
+  if (!customerContact) {
+    throw new InternalServerError(
+      `Failed to add contact ${contactId} to customer ${customerId}`
+    );
+  }
+
+  return res.status(HttpStatus.CREATED).send(customerContact);
 });
 
 /**
