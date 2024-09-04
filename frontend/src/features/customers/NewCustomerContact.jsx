@@ -1,7 +1,7 @@
 import PropType from 'prop-types';
 import { useDispatch, useSelector } from 'react-redux';
 import { createCustomerContact, selectUnmappedContacts } from './customersSlice';
-import { useEffect } from 'react';
+import { useEffect, useMemo } from 'react';
 import { fetchContacts } from '../contacts/contactsSlice';
 
 const useNewCustomerContact = customerId => {
@@ -29,6 +29,8 @@ const NewCustomerContact = ({ customerId }) => {
     createContact(contactId);
   };
 
+  const formDisabled = useMemo(() => unmappedContacts.length === 0, [unmappedContacts]);
+
   if (!unmappedContacts) return null;
 
   return (
@@ -38,7 +40,7 @@ const NewCustomerContact = ({ customerId }) => {
           <label className='form-label' htmlFor='selectCustomer'>
             Select Contact
           </label>
-          <select className='form-select' id='selectCustomer' name='selectCustomer'>
+          <select className='form-select' id='selectCustomer' name='selectCustomer' disabled={formDisabled}>
             {unmappedContacts.map(c => (
               <option key={c.id} value={c.id}>
                 {`${c.firstName} ${c.lastName}`}
@@ -47,7 +49,7 @@ const NewCustomerContact = ({ customerId }) => {
           </select>
         </div>
       </div>
-      <button className='btn btn-primary' type='submit'>
+      <button className='btn btn-primary' type='submit' disabled={formDisabled}>
         Add Contact
       </button>
     </form>

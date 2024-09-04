@@ -218,7 +218,7 @@ export const selectFilteredCustomerIds = createSelector(
 
 export const selectCustomerContacts = createSelector(
   selectCustomerById,
-  customer => customer.contacts || []
+  customer => customer.contacts ?? []
 );
 
 export const selectUnmappedContacts = createSelector(
