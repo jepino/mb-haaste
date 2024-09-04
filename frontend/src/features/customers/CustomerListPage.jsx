@@ -1,22 +1,21 @@
-import { useEffect, useMemo } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useEffect } from 'react';
+import { useDispatch } from 'react-redux';
 import { fetchCustomers } from './customersSlice';
 import CustomerTable from './CustomerTable';
 import NewCustomer from './NewCustomer';
 
-const useCustomers = () => {
+const useFetchCustomers = () => {
   const dispatch = useDispatch();
   useEffect(() => {
     dispatch(fetchCustomers());
   }, [dispatch]);
   const refetch = () => dispatch(fetchCustomers());
-  const { data, status, error } = useSelector(state => state.customers);
-  const customersLoading = useMemo(() => status === 'pending', [status]);
-  return { data, loading: customersLoading, error, refetch };
+  return { refetch };
 };
 
 const CustomerListPage = () => {
-  const { data: customers, loading, error, refetch } = useCustomers();
+  const { refetch } = useFetchCustomers();
+
   return (
     <div className='m-5'>
       <h1 className='fw-bold'>Customers</h1>
@@ -27,12 +26,7 @@ const CustomerListPage = () => {
         <NewCustomer />
       </div>
       <div>
-        {error ? (
-          <div className='alert alert-danger d-block mt-3' role='alert'>
-            {error.message}
-          </div>
-        ) : null}
-        {loading ? 'Loading...' : <CustomerTable customers={customers} />}
+        <CustomerTable />
       </div>
     </div>
   );

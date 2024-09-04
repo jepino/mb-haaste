@@ -1,37 +1,12 @@
-import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
+import {
+  createAsyncThunk,
+  createEntityAdapter,
+  createSelector,
+  createSlice,
+} from '@reduxjs/toolkit';
 import { client } from '../../app/api';
 import { handleAsyncThunk } from '../../app/asyncThunksHandler';
-
-const initialState = {
-  data: [],
-  status: 'idle',
-  error: null,
-  currentRequestId: null,
-};
-
-// CUSTOMERS
-const customersSlice = createSlice({
-  name: 'customers',
-  initialState,
-  reducers: {},
-  extraReducers: builder => {
-    handleAsyncThunk(builder, fetchCustomers, (state, action) => {
-      state.data = action.payload;
-    });
-    handleAsyncThunk(builder, fetchCustomerById, (state, action) => {
-      state.data = state.data.concat(action.payload);
-    });
-    handleAsyncThunk(builder, createCustomer, (state, action) => {
-      state.data = state.data.concat(action.payload);
-    });
-    handleAsyncThunk(builder, updateCustomer, (state, action) => {
-      state.data = state.data.map(customer =>
-        customer.id === action.payload.id ? action.payload : customer
-      );
-    });
-  },
-});
-export default customersSlice.reducer;
+import { FilterState } from './CustomerTable';
 
 export const fetchCustomers = createAsyncThunk(
   'customers/fetchAll',
@@ -96,3 +71,62 @@ export const updateCustomer = createAsyncThunk(
 );
 
 // MB-TODO: create action for creating customer contacts. NOTE: remember to add them to `customerSlice`
+
+const customerAdapter = createEntityAdapter({
+  selectId: customer => customer.id,
+});
+
+const initialState = customerAdapter.getInitialState({
+  status: 'idle',
+  error: null,
+  currentRequestId: null,
+});
+
+const customersSlice = createSlice({
+  name: 'customers',
+  initialState,
+  reducers: {},
+  extraReducers: builder => {
+    handleAsyncThunk(builder, fetchCustomers, customerAdapter.setAll);
+    handleAsyncThunk(builder, fetchCustomerById, customerAdapter.setOne);
+    handleAsyncThunk(builder, createCustomer, customerAdapter.setOne);
+    handleAsyncThunk(builder, updateCustomer, customerAdapter.updateOne);
+  },
+});
+export default customersSlice.reducer;
+
+export const {
+  selectIds: selectCustomerIds,
+  selectAll: selectAllCustomers,
+  selectEntities: selectCustomerEntities,
+  selectById: selectCustomerById,
+} = customerAdapter.getSelectors(state => state.customers);
+
+const selectCustomerStatus = state => state.customers.status;
+export const selectCustomerLoading = createSelector(
+  selectCustomerStatus,
+  status => status === 'pending'
+);
+export const selectCustomerError = state => state.customers.error;
+
+export const selectFilteredCustomerIds = createSelector(
+  [selectCustomerIds, selectCustomerEntities, (state, filter) => filter],
+  (ids, entities, filter) => {
+    return ids.filter(id => {
+      switch (filter) {
+        case FilterState.ALL: {
+          return true;
+        }
+        case FilterState.ACTIVE: {
+          return entities[id].isActive;
+        }
+        case FilterState.INACTIVE: {
+          return !entities[id].isActive;
+        }
+        default: {
+          return true;
+        }
+      }
+    });
+  }
+);

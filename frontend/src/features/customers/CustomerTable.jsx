@@ -1,9 +1,12 @@
-import PropTypes from 'prop-types';
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import MBTodo from '../../components/MBTodo';
-import { useMemo, useState } from 'react';
+import { PropTypes } from 'prop-types';
 
-const FilterState = Object.freeze({
+import MBTodo from '../../components/MBTodo';
+import { useSelector } from 'react-redux';
+import { selectCustomerById, selectCustomerError, selectCustomerLoading, selectFilteredCustomerIds } from './customersSlice';
+
+export const FilterState = Object.freeze({
   ALL: 'all',
   ACTIVE: 'active',
   INACTIVE: 'inactive',
@@ -11,37 +14,30 @@ const FilterState = Object.freeze({
 
 const filterValues = Object.values(FilterState);
 
-const useTableFilters = customers => {
+const useCustomerTable = () => {
   const [filter, setFilter] = useState(FilterState.ALL);
-  const filteredCustomers = useMemo(() => {
-    switch (filter) {
-      case FilterState.ALL: {
-        return customers;
-      }
-      case FilterState.ACTIVE: {
-        return customers.filter(customer => customer.isActive);
-      }
-      case FilterState.INACTIVE: {
-        return customers.filter(customer => !customer.isActive);
-      }
-      default: {
-        return customers;
-      }
-    }
-  }, [filter, customers]);
+  const filteredIds = useSelector(state => selectFilteredCustomerIds(state, filter));
+  const loading = useSelector(selectCustomerLoading);
+  const error = useSelector(selectCustomerError);
+
   const handleFilterClick = newFilter => {
     setFilter(() => newFilter);
   };
-  return { filter, filteredCustomers, handleFilterClick };
+  return { filteredIds, loading, error, filter, handleFilterClick };
 };
 
-const Table = ({ customers }) => {
-  const navigate = useNavigate();
-  const { filter, filteredCustomers, handleFilterClick } = useTableFilters(customers);
+const CustomerTable = () => {
+  const { filteredIds: customerIds, loading, error, filter, handleFilterClick } = useCustomerTable();
 
-  const handleCustomerClick = customer => {
-    navigate(customer.id);
-  };
+  if (error) {
+    return (
+      <div className='alert alert-danger d-block mt-3' role='alert'>
+        {error.message}
+      </div>
+    );
+  } else if (loading) {
+    return <div>Loading...</div>;
+  }
 
   return (
     <>
@@ -75,30 +71,37 @@ const Table = ({ customers }) => {
           </tr>
         </thead>
         <tbody>
-          {filteredCustomers.map((customer, index) => {
-            return (
-              <tr key={index} className='' onClick={() => handleCustomerClick(customer)}>
-                <th scope='row'>{index + 1}</th>
-                <td>{customer.name}</td>
-                <td>{customer.country}</td>
-                <td>{customer.isActive ? '✅' : '❌'}</td>
-              </tr>
-            );
-          })}
+          {customerIds.map((id, index) => (
+            <CustomerRow key={id} id={id} index={index} />
+          ))}
         </tbody>
       </table>
     </>
   );
 };
 
-Table.propTypes = {
-  customers: PropTypes.arrayOf(
-    PropTypes.shape({
-      name: PropTypes.string,
-      country: PropTypes.string,
-      isActive: PropTypes.bool,
-    })
-  ),
+export default CustomerTable;
+
+const CustomerRow = ({ id, index }) => {
+  const customer = useSelector(state => selectCustomerById(state, id));
+
+  const navigate = useNavigate();
+
+  const handleClick = () => {
+    navigate(id);
+  };
+
+  return (
+    <tr key={id} className='' onClick={handleClick}>
+      <th scope='row'>{index + 1}</th>
+      <td>{customer.name}</td>
+      <td>{customer.country}</td>
+      <td>{customer.isActive ? '✅' : '❌'}</td>
+    </tr>
+  );
 };
 
-export default Table;
+CustomerRow.propTypes = {
+  id: PropTypes.string,
+  index: PropTypes.number,
+};

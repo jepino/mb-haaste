@@ -1,13 +1,12 @@
-import { useEffect, useMemo } from 'react';
+import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useParams } from 'react-router-dom';
 import MBTodo from '../../components/MBTodo';
-import { fetchCustomerById, updateCustomer } from './customersSlice';
+import { fetchCustomerById, selectCustomerById, selectCustomerError, selectCustomerLoading, updateCustomer } from './customersSlice';
 import CustomerContactTable from '../customerContacts/CustomerContactTable';
 
 const useCustomer = id => {
   const dispatch = useDispatch();
-
   useEffect(() => {
     if (id) {
       dispatch(fetchCustomerById(id));
@@ -16,10 +15,11 @@ const useCustomer = id => {
 
   const update = (name, country, isActive) => dispatch(updateCustomer({ id, name, country, isActive }));
 
-  const { data: customers, status, error } = useSelector(state => state.customers);
-  const customer = customers.find(customer => customer.id === id);
-  const customerLoading = useMemo(() => status === 'pending', [status]);
-  return { data: customer, loading: customerLoading, error, update };
+  const customer = useSelector(state => selectCustomerById(state, id));
+  const loading = useSelector(selectCustomerLoading);
+  const error = useSelector(selectCustomerError);
+
+  return { customer, loading, error, update };
 };
 
 const FormIdentifiers = Object.freeze({
@@ -35,7 +35,7 @@ const SelectValues = Object.freeze({
 
 const CustomerPage = () => {
   const { customerId } = useParams();
-  const { data: customer, loading, error, update } = useCustomer(customerId);
+  const { customer, loading, error, update } = useCustomer(customerId);
 
   const handleSubmit = event => {
     // MB-DONE: Handle customer update
@@ -100,20 +100,9 @@ const CustomerPage = () => {
                 </select>
               </div>
             </div>
-            <div className='row'>
-              <div className='col-1'>
-                <button className='btn btn-primary w-100' type='submit' disabled={loading}>
-                  Save
-                </button>
-              </div>
-              <div className='col-1 d-flex justify-content-start align-items-center '>
-                {loading && (
-                  <div className='spinner-border' role='status'>
-                    <span className='visually-hidden'>Loading...</span>
-                  </div>
-                )}
-              </div>
-            </div>
+            <button className='btn btn-primary' type='submit' disabled={loading}>
+              Save
+            </button>
           </form>
 
           <div className={`alert alert-danger d-block ${error ? 'visible' : 'invisible'}`} role='alert'>
